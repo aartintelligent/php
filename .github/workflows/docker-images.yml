@@ -1,0 +1,22 @@
+name: Docker Images CI
+
+on:
+  schedule:
+    - cron: "0 1 * * 1"
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: checkout repo
+        uses: actions/checkout@main
+      - name: Build and Push the Docker images
+        run: make all
