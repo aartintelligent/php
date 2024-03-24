@@ -1,7 +1,5 @@
 FROM debian:stable-slim
 
-ARG UID='1000'
-ARG GID='1000'
 ARG PHP_VERSION='8.3'
 
 ENV \
@@ -11,16 +9,6 @@ COMPOSER_ALLOW_SUPERUSER="1" \
 COMPOSER_ALLOW_XDEBUG="0"
 
 VOLUME ["/var/cache/composer"]
-
-RUN set -eux; \
-    groupadd \
-      --gid $GID \
-      rootless \
-    && useradd \
-      --uid $UID \
-      --gid $GID \
-      --shell /bin/bash \
-      rootless
 
 RUN set -eux; \
     apt-get update \
@@ -82,16 +70,8 @@ RUN set -eux; \
        /etc/php/${PHP_VERSION} \
     && chmod +x \
         /docker-entrypoint \
-    && chown rootless:rootless \
-        /run \
-        /src \
-        /etc/php \
-        /var/lock \
-        /var/cache \
-        /var/lib/php \
     && rm -rf \
         /src/* \
-        /var/www/* \
         /var/lib/apt/lists/* \
         /etc/php-z \
     && curl -sS https://getcomposer.org/download/latest-stable/composer.phar \
@@ -107,5 +87,3 @@ ENTRYPOINT ["/docker-entrypoint"]
 WORKDIR /src
 
 CMD ["composer"]
-
-USER rootless
